@@ -7,11 +7,7 @@
 	<?php require "../conexao.php";?>
 </head>
 <body>
-	<?php require "topo.php"; ?>
-
-	<div id="caixa_preta">
-	</div><!-- caixa_preta -->
-
+	<?php require "topo.php"; ?>	
 	<?php if(@$_GET['pg'] == 'professor'){ ?>
 		<div id="box_curso">
 			<br/><br/>

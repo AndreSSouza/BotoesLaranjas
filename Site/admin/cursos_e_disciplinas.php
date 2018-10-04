@@ -11,10 +11,7 @@
 	<?php require "topo.php"; ?>
 
 <!CADASTRAR TURMAS>
-
-	<div id="caixa_preta">
-	</div><!-- caixa_preta -->
-
+	
 	<?php if(@$_GET['pg'] == 'turma'){ ?>
 		<div id="box_curso">
 

@@ -47,7 +47,7 @@
 						</td>
 						<td>Data de Hoje:</td>
 						<td>
-							<input type="disabled" name="data_atual" value="<?php date_default_timezone_set("America/Sao_Paulo"); echo date('d/m/Y'); ?>" style="width:80px">
+							<input type="text" name="data_atual" value="<?php date_default_timezone_set("America/Sao_Paulo"); echo date('d/m/Y'); ?>" style="width:80px" disabled>
 						</td>
 						<td>						
 							<input type="submit" name="buscar" value="Buscar" class="input" id="button">
@@ -68,14 +68,10 @@
 			$sql_verifica_chamada = "SELECT * FROM chamada c WHERE c.id_turma = '$cod_turma' AND data_chamada = '$data_hoje_USA'";
 			$sql_retorno = mysqli_query($conexao, $sql_verifica_chamada) or die(mysqli_error($conexao));
 	
-		if(mysqli_num_rows($sql_retorno) > 0){
-			
-			if(isset($POST_['alterar'])){
-				
-			}
-			
-			echo "<h1>Chamada na data de hoje</h1>";?>
-			<form metho="POST">
+		if(mysqli_num_rows($sql_retorno) > 0){ ?>
+		
+			<h1>Chamada na data de hoje</h1>
+			<form name="modifica" method="post" enctype="multipart/form-data" action="">
 				<table width='900'>
 					<tr>
 						<td>Nome</td>
@@ -83,24 +79,41 @@
 						<td>Status</td>					
 						<td>Modificar</td>							
 					</tr>
-						<?php $altera_chamada = "SELECT c.id_aluno, c.id_turma, c.id_professor, c.data_chamada data, c.presenca status, i.nome_aluno nome FROM chamada c INNER JOIN professor p ON p.id_professor = c.id_professor INNER JOIN turma t ON t.id_turma = c.id_turma INNER JOIN aluno a ON a.id_aluno = c.id_aluno INNER JOIN inscricao i ON i.id_inscricao = a.id_inscricao WHERE a.id_aluno <> '' AND c.id_turma = '$cod_turma' AND c.id_professor = '$cod_professor' AND c.data_chamada = '$data_hoje_USA'";
+						<?php $altera_chamada = "SELECT c.id_aluno aluno, c.id_turma turma, c.id_professor prof, c.data_chamada data, c.presenca status, i.nome_aluno nome FROM chamada c INNER JOIN professor p ON p.id_professor = c.id_professor INNER JOIN turma t ON t.id_turma = c.id_turma INNER JOIN aluno a ON a.id_aluno = c.id_aluno INNER JOIN inscricao i ON i.id_inscricao = a.id_inscricao WHERE a.id_aluno <> '' AND c.id_turma = '$cod_turma' AND c.id_professor = '$cod_professor' AND c.data_chamada = '$data_hoje_USA'";
 						$query = mysqli_query($conexao, $altera_chamada) or die (mysqli_error($conexao));
 						while($dados_chamada = mysqli_fetch_assoc($query)){ 
-						$nome = $dados_chamada['nome'];
-						$data = $dados_chamada['data'];
-						$data = date('d/m/Y', strtotime($data));
-						$status =  $dados_chamada['status'];
-						$mascara_status = $status ? "Presente" : "Ausente";
-						$cor = $status ? 'lightgreen' : 'tomato';?>
-							<tr>						
-								<td> <?php echo $nome; ?> </td>
-								<td> <?php echo $data; ?> </td>
-								<td style="background-color: <?php echo $cor;?>"> <?php echo $mascara_status; ?> </td>
-								<td><input type="submit" value="Alterar" title="Modificar o aluno <?php echo $dados_chamada['nome'];?>" name="alterar" class="input" id="button"/></td>
-							</tr>							
+							$nome = $dados_chamada['nome'];
+							$id_aluno = $dados_chamada['aluno'];
+							$data = $dados_chamada['data'];
+							$data = date('d/m/Y', strtotime($data));
+							$status =  $dados_chamada['status'];
+							$mascara_status = $status ? "Presente" : "Ausente";
+							$cor = $status ? 'lightgreen' : 'tomato';?>
+								<tr>						
+									<td><input type="hidden" value="<?php echo $id_aluno; ?>" name="id_aluno"/><?php echo $nome; ?> </td>
+									<td><input type="hidden" value="<?php echo $data; ?>" name="data_chamada"/> <?php echo $data; ?> </td>
+									<td style="background-color: <?php echo $cor;?>"><input type="hidden" value="<?php echo $status; ?>" name="status"/> <?php echo $mascara_status; ?> </td>
+									<td><input type="submit" value="Alterar" title="Modificar o aluno <?php echo $nome;?>" name="alterar" class="input" id="button"/></td>
+									<?php if(isset($_POST['alterar'])){
+
+										$id_aluno_post = @$_POST['id_aluno'];
+										$data_post = @$_POST['data_chamada'];
+										$status_post = @$_POST['status'];
+										$cod_turma_get = @$_GET['turma'];
+										$cod_professor_get = @$_GET['professor'];
+													var_dump($status_post);
+										$status_post = ($status_post === '0') ? '1' : '0';
+										var_dump($status_post);
+
+
+
+										//echo "<script language='javascript'>window.alert('Alterado com sucesso!'); window.location='fazer_chamada.php?turma=$cod_turma&professor=$cod_professor&buscar=Buscar';</script>";					
+									}?>
+								</tr>								
 						<?php } ?>					
 				</table>
-			</form>			
+			</form>
+			
 		<?php }else{						
 			
             $sql_resultado_consulta_nome_turma = "SELECT nome_turma, id_turma FROM turma WHERE id_turma = '$cod_turma'";
@@ -191,8 +204,7 @@
                         $chamada_completa = substr($chamada_completa, 0, -1); 
                         $retorno_chamada = mysqli_query($conexao, $chamada_completa) or die(mysqli_error($conexao));
                         if ($resultado_consulta_nome_professor) {
-                            echo "<script language='javascript'>window.alert('Chamada Realizada com sucesso!');</script>";
-							echo "<script language='javascript'>window.location('fazer_chamada.php?turma='$cod_turma'&professor='$cod_professor'&data_atual='$data_hoje_BR'&buscar=Buscar');</script>";
+                            echo "<script language='javascript'>window.alert('Chamada Realizada com sucesso!'); window.location='fazer_chamada.php?turma=$cod_turma&professor=$cod_professor&buscar=Buscar';</script>";							
                         } else {
                             echo "<script language='javascript'>window.alert('Houve um erro chamada não realizada!');</script>";
                         }                    

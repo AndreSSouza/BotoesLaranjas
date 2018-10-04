@@ -29,10 +29,6 @@
 	<?php require "topo.php"; ?>
 
 <!LISTA DE ESPERA>
-	
-	<div id="caixa_preta">
-	</div><!-- caixa_preta -->
-	
 	<div id="box_curso">
 
 		<?php if(@$_GET['pg'] == 'espera'){ ?>

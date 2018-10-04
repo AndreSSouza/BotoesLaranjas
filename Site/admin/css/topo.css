@@ -36,9 +36,8 @@ body #index #sobre{
 #logo{
 	width:320px;
 	height:200px;
-	float:none;
-	margin:-20px 0 0 -160px;
-	text-align:left;
+	float:left;
+	margin:10px 0 -255px -90px;	
 	}
 
 	
