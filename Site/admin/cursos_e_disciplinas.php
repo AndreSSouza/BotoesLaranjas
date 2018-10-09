@@ -77,7 +77,7 @@
 
 <!>
 
-<!Editando na Lista de Espera>
+<!Editando a turma>
 
 			<?php if(@$_GET['op'] == 'atualizar'){ ?>
 
@@ -253,7 +253,7 @@
 				</table>
 				<br/><br/>
 			<?php } ?>
-		</div><!-- box_curso -->
+		</div>
 	<?php  }?>
 
 <!>
@@ -262,7 +262,7 @@
 
 	<?php if(@$_GET['pg'] == 'matricula'){ ?>
 
-		<div id="box_disciplinas">
+		<div id="box_curso">
 			<a class="a2" href="cursos_e_disciplinas.php?pg=matricula&amp;cadastra=sim">Matricular Alunos</a>
 
 <!Editando a Matricula>
@@ -466,7 +466,7 @@
       			<?php } ?>
     			</table>
 			<?php } ?>
-		</div><!-- box_disciplinas -->
+		</div><!-- box_curso -->
 	<?php } ?>
 
 	<?php require "rodape.php"; ?>

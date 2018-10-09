@@ -26,7 +26,7 @@
 <body bgcolor="#000">
 	<!-- <div id="box_topo">-->
  		<div id="logo">
-  			<img src="../img/logoEtec.png" width="120px" height="170px"/>
+  			<img src="../img/logoEtec.png" width="120px" height="170px" style="background-color: #2c82ce;"/>
  		</div> 
  		<!--<div id="campo_busca">
   			<form name="" method="post" action="" enctype="multipart/form-data">
