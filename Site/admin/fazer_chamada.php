@@ -14,7 +14,31 @@
 
     <div id="box_curso">
 
-        <?php if(!isset($_GET['buscar'])){ ?>
+        <?php if((@$_GET['turma']) && (@$_GET['professor']) && (@$_GET['aluno']))
+		{
+			$id_aluno_post = $_GET['aluno'];
+			date_default_timezone_set("America/Sao_Paulo");	
+			$data_post = $_GET['data_chamada'];							
+			$status_post = $_GET['status'];
+			$cod_turma_get = $_GET['turma'];
+			$cod_professor_get = $_GET['professor'];
+
+			$trocaStatus = $status_post == '1' ? '0' : '1';
+
+			$update_troca = "UPDATE chamada c SET c.presenca = '$trocaStatus' WHERE c.id_turma = '$cod_turma_get' AND c.id_professor = '$cod_professor_get' AND c.data_chamada = '$data_post' AND c.id_aluno = '$id_aluno_post'";
+
+			$sql_insert = mysqli_query($conexao, $update_troca) or die(mysqli_error($conexao));
+
+			if (!$sql_insert)
+			{
+				echo mysqli_errno($conexao) . ": " . mysqli_error($conexao) . "\n";
+			}
+			else
+			{
+				echo "<script language='javascript'>window.alert('Alterado com sucesso!'); window.location='fazer_chamada.php?turma=$cod_turma_get&professor=$cod_professor_get&buscar=Buscar';</script>";
+			}                                  
+		}
+		if(!isset($_GET['buscar'])){ ?>
 
             <h1><center>Chamada: Selecione a Turma o Professor e dê "Buscar"</center></h1><br/>
 
@@ -57,8 +81,8 @@
             </form>
             <br/><br/>
 
-    	<?php }else{ 				
-					
+    	<?php }else{
+		
 			$cod_turma = $_GET['turma'];	
             $cod_professor = $_GET['professor'];
             date_default_timezone_set("America/Sao_Paulo");
@@ -71,7 +95,7 @@
 		if(mysqli_num_rows($sql_retorno) > 0){ ?>
 		
 			<h1>Chamada na data de hoje</h1>
-			<form name="modifica" method="post" enctype="multipart/form-data" action="">
+			<form name="modifica" enctype="multipart/form-data" action="">
 				<table width='900'>
 					<tr>
 						<td>Nome</td>
@@ -79,36 +103,23 @@
 						<td>Status</td>					
 						<td>Modificar</td>							
 					</tr>
-						<?php $altera_chamada = "SELECT c.id_aluno aluno, c.id_turma turma, c.id_professor prof, c.data_chamada data, c.presenca status, i.nome_aluno nome FROM chamada c INNER JOIN professor p ON p.id_professor = c.id_professor INNER JOIN turma t ON t.id_turma = c.id_turma INNER JOIN aluno a ON a.id_aluno = c.id_aluno INNER JOIN inscricao i ON i.id_inscricao = a.id_inscricao WHERE a.id_aluno <> '' AND c.id_turma = '$cod_turma' AND c.id_professor = '$cod_professor' AND c.data_chamada = '$data_hoje_USA'";
+						<?php $altera_chamada = "SELECT c.id_aluno aluno, c.id_turma turma, c.id_professor prof, c.data_chamada data_chamada, c.presenca status, i.nome_aluno nome FROM chamada c INNER JOIN professor p ON p.id_professor = c.id_professor INNER JOIN turma t ON t.id_turma = c.id_turma INNER JOIN aluno a ON a.id_aluno = c.id_aluno INNER JOIN inscricao i ON i.id_inscricao = a.id_inscricao WHERE a.id_aluno <> '' AND c.id_turma = '$cod_turma' AND c.id_professor = '$cod_professor' AND c.data_chamada = '$data_hoje_USA'";
 						$query = mysqli_query($conexao, $altera_chamada) or die (mysqli_error($conexao));
 						while($dados_chamada = mysqli_fetch_assoc($query)){ 
 							$nome = $dados_chamada['nome'];
 							$id_aluno = $dados_chamada['aluno'];
-							$data = $dados_chamada['data'];
-							$data = date('d/m/Y', strtotime($data));
+							$data = $dados_chamada['data_chamada'];
+							$data_sem_formatacao = $data;
+							$data_sem_formatacao = date('d/m/Y', strtotime($data_sem_formatacao));
+							$data_usa = date('Y-m-d', strtotime($data));
 							$status =  $dados_chamada['status'];
 							$mascara_status = $status ? "Presente" : "Ausente";
 							$cor = $status ? 'lightgreen' : 'tomato';?>
 								<tr>						
 									<td><input type="hidden" value="<?php echo $id_aluno; ?>" name="id_aluno"/><?php echo $nome; ?> </td>
-									<td><input type="hidden" value="<?php echo $data; ?>" name="data_chamada"/> <?php echo $data; ?> </td>
+									<td><input type="hidden" value="<?php echo $data_usa; ?>" name="data_chamada"/> <?php echo $data_sem_formatacao; ?> </td>
 									<td style="background-color: <?php echo $cor;?>"><input type="hidden" value="<?php echo $status; ?>" name="status"/> <?php echo $mascara_status; ?> </td>
-									<td><input type="submit" value="Alterar" title="Modificar o aluno <?php echo $nome;?>" name="alterar" class="input" id="button"/></td>
-									<?php if(isset($_POST['alterar'])){
-
-										$id_aluno_post = @$_POST['id_aluno'];
-										$data_post = @$_POST['data_chamada'];
-										$status_post = @$_POST['status'];
-										$cod_turma_get = @$_GET['turma'];
-										$cod_professor_get = @$_GET['professor'];
-													var_dump($status_post);
-										$status_post = ($status_post === '0') ? '1' : '0';
-										var_dump($status_post);
-
-
-
-										//echo "<script language='javascript'>window.alert('Alterado com sucesso!'); window.location='fazer_chamada.php?turma=$cod_turma&professor=$cod_professor&buscar=Buscar';</script>";					
-									}?>
+									<td><a title="Modificar o aluno <?php echo $nome;?>" href="fazer_chamada.php?turma=<?php echo $cod_turma;?>&professor=<?php echo $cod_professor; ?>&aluno=<?php echo $id_aluno; ?>&data_chamada=<?php echo $data_usa; ?>&status=<?php echo $status; ?>" class="input" name="alterar" >alterar</a></td>								
 								</tr>								
 						<?php } ?>					
 				</table>
